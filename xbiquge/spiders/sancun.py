@@ -12,8 +12,9 @@ class SancunSpider(scrapy.Spider):
     name_txt = "./novels/三寸人间"
 
     pipeline=XbiqugePipeline()
-    #pipeline.createtable(name)
+    pipeline.clearcollection(name) #清空小说的数据集合（collection），mongodb的collection相当于mysql的数据表table
     item = XbiqugeItem()
+    item['id'] = 0         #新增id字段，便于查询
     item['name'] = name
     item['url_firstchapter'] = url_firstchapter
     item['name_txt'] = name_txt
@@ -36,6 +37,7 @@ class SancunSpider(scrapy.Spider):
         #item['name'] = self.name
         #item['url_firstchapter'] = self.url_firstchapter
         #item['name_txt'] = self.name_txt
+        self.item['id'] += 1
         self.item['url'] = response.url
         self.item['preview_page'] = self.url_ori + response.css('div .bottem1 a::attr(href)').extract()[1]
         self.item['next_page'] = self.url_ori + response.css('div .bottem1 a::attr(href)').extract()[3]
@@ -47,4 +49,5 @@ class SancunSpider(scrapy.Spider):
         #print(text)
         self.item['content'] = title + "\n" + text.replace('\15', '\n')     #各章节标题和内容组合成content数据，\15是^M的八进制表示，需要替换为换行符。
         yield self.item     #以生成器模式（yield）输出Item对象的内容给pipelines模块。
+
 
