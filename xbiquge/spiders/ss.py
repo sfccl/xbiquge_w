@@ -4,12 +4,12 @@ from xbiquge.items import XbiqugeItem
 from xbiquge.pipelines import XbiqugePipeline
 
 class SancunSpider(scrapy.Spider):
-    name = 'sancun'
+    name = 'ss'
     allowed_domains = ['www.xbiquge.la']
     #start_urls = ['http://www.xbiquge.la/10/10489/']
     url_ori= "https://www.xbiquge.la"
-    url_firstchapter = "http://www.xbiquge.la/10/10489/4534454.html"
-    name_txt = "./novels/三寸人间"
+    url_firstchapter = "https://www.xbiquge.la/49/49527/21336447.html"
+    name_txt = "./novels/绍宋"
 
     pipeline=XbiqugePipeline()
     #pipeline.clearcollection(name) #清空小说的数据集合（collection），mongodb的collection相当于mysql的数据表table
@@ -24,7 +24,7 @@ class SancunSpider(scrapy.Spider):
     item['name_txt'] = name_txt
 
     def start_requests(self):
-        start_urls = ['http://www.xbiquge.la/10/10489/']
+        start_urls = ['https://www.xbiquge.la/49/49527/']
         for url in start_urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
@@ -46,10 +46,10 @@ class SancunSpider(scrapy.Spider):
             if count_iterator != 0 :            #如果有命中结果，则继续下一个循环，不执行爬取动作
                continue
             print("爬取url:",self.url_c)
+            print("count_bingo:",count_bingo)
             #yield scrapy.Request(self.url_c, callback=self.parse_c,dont_filter=True)
             yield scrapy.Request(self.url_c, callback=self.parse_c)    #以生成器模式（yield）调用parse_c方法获得各章节链接、上一页链接、下一页链接和章节内容信息。
             #print(self.url_c)
-        print("count_bingo:",count_bingo)       
 
     def parse_c(self, response):
         #item = XbiqugeItem()
