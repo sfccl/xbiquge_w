@@ -92,5 +92,5 @@ ITEM_PIPELINES = {
 
 FEED_EXPORT_ENCODING = 'utf-8'
 LOG_LEVEL = 'DEBUG'
-#LOG_FILE = './myspiders.log'
-LOG_FILE = './NULL' 
+LOG_FILE = './myspiders.log'
+#LOG_FILE = './NULL' 

@@ -10,7 +10,7 @@ from twisted.enterprise import adbapi
 from pymongo import MongoClient
 
 class XbiqugePipeline(object):
-    conn = MongoClient('localhost',27017)
+    conn = MongoClient('mongodb://admin:admin@localhost:27017/admin')
     db = conn.novels #建立数据库novels的连接对象db
     #name_novel = ''
 
@@ -24,6 +24,10 @@ class XbiqugePipeline(object):
     def clearcollection(self, name_collection):
         myset = self.db[name_collection]
         myset.remove()
+
+    def get_collection(self,name_collection):
+        myset = self.db[name_collection]
+        return myset
 
     def process_item(self, item, spider):
         #if self.name_novel == '':

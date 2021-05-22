@@ -4,12 +4,12 @@ from xbiquge.items import XbiqugeItem
 from xbiquge.pipelines import XbiqugePipeline
 
 class SancunSpider(scrapy.Spider):
-    name = 'sancun'
+    name = 'wdssny'
     allowed_domains = ['www.xbiquge.la']
     #start_urls = ['http://www.xbiquge.la/10/10489/']
-    url_ori= "http://www.xbiquge.la"
-    url_firstchapter = "http://www.xbiquge.la/10/10489/4534454.html"
-    name_txt = "./novels/三寸人间"
+    url_ori= "https://www.xbiquge.la"
+    url_firstchapter = "https://www.xbiquge.la/80/80058/31226099.html"
+    name_txt = "./novels/我的杀手女友"
 
     pipeline=XbiqugePipeline()
     #pipeline.clearcollection(name) #清空小说的数据集合（collection），mongodb的collection相当于mysql的数据表table
@@ -24,7 +24,7 @@ class SancunSpider(scrapy.Spider):
     item['name_txt'] = name_txt
 
     def start_requests(self):
-        start_urls = ['http://www.xbiquge.la/10/10489/']
+        start_urls = ['https://www.xbiquge.la/80/80058/']
         for url in start_urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
@@ -34,9 +34,9 @@ class SancunSpider(scrapy.Spider):
             self.url_c = self.url_ori + dd.css('a::attr(href)').extract()[0]   #组合形成小说的各章节链接
             print("网页提取url:", self.url_c)
             count_iterator=0
-            self.novelurls=self.novelcollection.find({},{"_id":0,"id":1,"url":1})   #重置迭>代器指针，使for循环能够遍历迭代器
+            self.novelurls=self.novelcollection.find({},{"_id":0,"id":1,"url":1})   #重置迭代器指针，使for循环能够遍历迭代器
             for url in self.novelurls:
-                #print("mongodb提取url:", url)
+                print("mongodb提取url:", url)
                 if url["url"]==self.url_c:      #如果数据库中找到与网页提取的url值相同，则跳出循环
                     count_iterator += 1
                     print("count_iterator:",count_iterator)
