@@ -12,7 +12,9 @@ from pymongo import MongoClient
 class XbiqugePipeline(object):
     conn = MongoClient('mongodb://admin:admin@localhost:27017/admin')
     db = conn.novels #建立数据库novels的连接对象db
-    #name_novel = ''
+    name_novel = ''
+    url_firstchapter = ''
+    name_txt = ''
 
     #定义类初始化动作
     #def __init__(self):
@@ -34,8 +36,8 @@ class XbiqugePipeline(object):
         self.name_novel = item['name']
         self.url_firstchapter = item['url_firstchapter']
         self.name_txt = item['name_txt']
-
-        exec('self.db.'+ self.name_novel + '.insert_one(dict(item))')
+        if self.name_novel != '':
+            exec('self.db.'+ self.name_novel + '.insert_one(dict(item))')
         return item
 
     #从数据库取小说章节内容写入txt文件
@@ -69,6 +71,7 @@ class XbiqugePipeline(object):
 
     #爬虫结束，调用content2txt方法，生成txt文件
     def close_spider(self,spider):
-        self.content2txt(self.name_novel,self.url_firstchapter,self.name_txt)
+        if self.name_novel !='' and self.url_firstchapter != '' and self.name_txt != '':
+            self.content2txt(self.name_novel,self.url_firstchapter,self.name_txt)
         return
 
