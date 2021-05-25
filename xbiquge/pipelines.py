@@ -36,8 +36,10 @@ class XbiqugePipeline(object):
         self.name_novel = item['name']
         self.url_firstchapter = item['url_firstchapter']
         self.name_txt = item['name_txt']
-        if self.name_novel != '':
-            exec('self.db.'+ self.name_novel + '.insert_one(dict(item))')
+        myset = self.db[self.name_novel]
+        myset.insert_one(dict(item))
+#        if self.name_novel != '':
+#            exec('self.db.'+ self.name_novel + '.insert_one(dict(item))')
         return item
 
     #从数据库取小说章节内容写入txt文件
