@@ -33,7 +33,7 @@ class SancunSpider(scrapy.Spider):
         dl = response.css('#list dl dd')     #提取章节链接相关信息
         for dd in dl:
             self.url_c = self.url_ori + dd.css('a::attr(href)').extract()[0]   #组合形成小说的各章节链接
-            print("网页提取url:", self.url_c)
+            #print("网页提取url:", self.url_c)
             count_iterator=0
             self.novelurls=self.novelcollection.find({},{"_id":0,"id":1,"url":1})   #重置迭>代器指针，使for循环能够遍历迭代器
             for url in self.novelurls:

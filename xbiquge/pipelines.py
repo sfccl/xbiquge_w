@@ -65,7 +65,8 @@ class XbiqugePipeline(object):
             url_ct = myset.find({"url": url_c},{"next_page":1,"by":1,"_id":0})  #获取下一章链接的查询对象
             for item_url in url_ct:
                 url_c = item_url["next_page"]  #下一章链接地址赋值给url_c，准备下一次循环。
-                print("下一页",url_c)
+                #print("下一页",url_c)
+        print("最后获取的url",url_c)
         f.close()
         print(time.time()-start_time)
         print(txtname + ".txt" + " 文件已生成！")
