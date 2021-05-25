@@ -41,7 +41,7 @@ class SancunSpider(scrapy.Spider):
                 if url["url"]==self.url_c:      #如果数据库中找到与网页提取的url值相同，则跳出循环
                     count_iterator += 1
                     count_bingo += 1
-                    print("count_iterator:",count_iterator)
+                    #print("count_iterator:",count_iterator)
                     break
             if count_iterator != 0 :            #如果有命中结果，则继续下一个循环，不执行爬取动作
                continue
