@@ -29,13 +29,13 @@ class SancunSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
-        count_bingo=0
+        count_bingo=0   
         dl = response.css('#list dl dd')     #提取章节链接相关信息
         for dd in dl:
             self.url_c = self.url_ori + dd.css('a::attr(href)').extract()[0]   #组合形成小说的各章节链接
             print("网页提取url:", self.url_c)
             count_iterator=0
-            self.novelurls=self.novelcollection.find({},{"_id":0,"id":1,"url":1})   #重置迭>代器指针，使for循环能够遍历迭代器
+            self.novelurls=self.novelcollection.find({},{"_id":0,"id":1,"url":1})   #重置迭代器指针，使for循环能够遍历迭代器
             for url in self.novelurls:
                 #print("mongodb提取url:", url)
                 if url["url"]==self.url_c:      #如果数据库中找到与网页提取的url值相同，则跳出循环
@@ -49,7 +49,7 @@ class SancunSpider(scrapy.Spider):
             #yield scrapy.Request(self.url_c, callback=self.parse_c,dont_filter=True)
             yield scrapy.Request(self.url_c, callback=self.parse_c)    #以生成器模式（yield）调用parse_c方法获得各章节链接、上一页链接、下一页链接和章节内容信息。
             #print(self.url_c)
-        print("count_bingo:",count_bingo)       
+        print("数据库已有记录数count_bingo:",count_bingo)       
 
     def parse_c(self, response):
         #item = XbiqugeItem()
