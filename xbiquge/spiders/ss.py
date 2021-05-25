@@ -46,7 +46,7 @@ class SancunSpider(scrapy.Spider):
             if count_iterator != 0 :            #如果有命中结果，则继续下一个循环，不执行爬取动作
                continue
             print("爬取url:",self.url_c)
-            print("count_bingo:",count_bingo)
+            print("数据库中已有记录数count_bingo:",count_bingo)
             #yield scrapy.Request(self.url_c, callback=self.parse_c,dont_filter=True)
             yield scrapy.Request(self.url_c, callback=self.parse_c)    #以生成器模式（yield）调用parse_c方法获得各章节链接、上一页链接、下一页链接和章节内容信息。
             #print(self.url_c)
