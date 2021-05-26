@@ -10,10 +10,14 @@ class SancunSpider(scrapy.Spider):
     url_ori= "https://www.xbiquge.la"
     url_firstchapter = "https://www.xbiquge.la/10/10489/4534454.html"
     name_txt = "./novels/三寸人间"
-
+    url_chapters = url_firstchapter[0:32]
     pipeline=XbiqugePipeline()
     #pipeline.clearcollection(name) #清空小说的数据集合（collection），mongodb的collection相当于mysql的数据表table
     novelcollection=pipeline.get_collection(name)
+    #如果next_page的值是小说目录页面url，则把包含目录页面的记录删除，以免再次抓取时，出现多>个目录页面url，使得无法获得最新内容。
+    if novelcollection.find({"next_page":url_chapters}).count() != 0 :
+        print("包含目录页面url的记录数:",novelcollection.find({"next_page":url_chapters}).count())
+        novelcollection.remove({"next_page":url_chapters})
     novelcounts=novelcollection.find().count()
     novelurls=novelcollection.find({},{"_id":0,"id":1,"url":1})
     item = XbiqugeItem()
@@ -24,7 +28,8 @@ class SancunSpider(scrapy.Spider):
     item['name_txt'] = name_txt
 
     def start_requests(self):
-        start_urls = ['http://www.xbiquge.la/10/10489/']
+        start_urls = [self.url_chapters]
+        #print(start_urls)
         for url in start_urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
