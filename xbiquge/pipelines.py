@@ -51,8 +51,14 @@ class XbiqugePipeline(object):
         url_c = firsturl
         start_time=time.time()  #获取提取小说内容程序运行的起始时间
         f = open(txtname+".txt", mode='w', encoding='utf-8')   #写方式打开小说名称加txt组成的文件
+        label_error = ""
         for i in range(counts):  #括号中为counts
-            record_m = myset.find({"url": url_c},{"content":1,"by":1,"_id":0})
+            record_m_count=myset.find({"url": url_c},{"content":1,"_id":0}).count()
+            if record_m_count == 0:
+               print("数据库中没有找到章节内容。\n出错url:",url_c)
+               break
+               
+            record_m = myset.find({"url": url_c},{"content":1,"_id":0})
             record_content_c2a0 = ''
             for item_content in record_m:
                 record_content_c2a0 = item_content["content"]  #获取小说章节内容
@@ -62,11 +68,10 @@ class XbiqugePipeline(object):
             f.write('\n')
             f.write(record_content + '\n')
             f.write('\n\n')
-            url_ct = myset.find({"url": url_c},{"next_page":1,"by":1,"_id":0})  #获取下一章链接的查询对象
+            url_ct = myset.find({"url": url_c},{"next_page":1,"_id":0})  #获取下一章链接的查询对象
             for item_url in url_ct:
                 url_c = item_url["next_page"]  #下一章链接地址赋值给url_c，准备下一次循环。
                 #print("下一页",url_c)
-        print("最后获取的url",url_c)
         f.close()
         print(time.time()-start_time)
         print(txtname + ".txt" + " 文件已生成！")
