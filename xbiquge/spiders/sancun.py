@@ -8,7 +8,7 @@ class SancunSpider(scrapy.Spider):
     allowed_domains = ['www.xbiquge.la']
     #start_urls = ['http://www.xbiquge.la/10/10489/']
     url_ori= "https://www.xbiquge.la"
-    url_firstchapter = "http://www.xbiquge.la/10/10489/4534454.html"
+    url_firstchapter = "https://www.xbiquge.la/10/10489/4534454.html"
     name_txt = "./novels/三寸人间"
 
     pipeline=XbiqugePipeline()
