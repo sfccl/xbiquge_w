@@ -2,13 +2,14 @@
 
 一、正常抓取
 1、拷贝爬虫模板文件xbiquge/spiders/sancun.py
-若在xbiquge网站中，只需要修改爬虫名（name），章节目录url（start_urls），第一章url（url_firstchapter），小说中文名（name_txt）等参数即可
+若在xbiquge网站中，只需要修改爬虫名（name），第一章url（url_firstchapter），小说中文名（name_txt）等参数即可
 2、xbiquge/pipelines.py文件一般不用修改，若是发生错误，可取消该文件中的一些print语句以跟踪出错信息。
 3、xbiquge/settings.py文件一般不用修改，若抓取过程中出现异常，可修改一些参数，如DOWNLOAD_DELAY参数可设为2或3等等。
 4、若是其他网站，则需要通过测试，修改对应的items条目内容，具体情况具体分析。
 5、xbiquge_w是使用mongodb作为小说存储数据库。
 6、myspiders.log是爬虫log文件，记录抓取过程，该文件可用于排错。
 7、spider2txt.py是单独生成小说txt文件的程序，需要修改其中的变量。运行方法：python spider2txt.py
+8、爬虫开始时，会检查数据集中是否有next_page字段值为小说目录url的数据记录，若有，则删除该记录，以免数据集出现next_page字段值为小说目录url的多条记录，影响小说txt文件中最新内容的正常生成。
 
 二、抓取单章方法
 有时，在抓取小说过程中，会出现个别章节没有成功抓取，若重新全部抓取的话比较费时，考虑抓取单章内容进行补充。
