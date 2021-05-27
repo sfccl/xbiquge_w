@@ -46,21 +46,36 @@ class XbiqugePipeline(object):
     def content2txt(self,dbname,firsturl,txtname):
         myset = self.db[dbname]
         record_num = myset.find().count() #获取小说章节数量
-        print(record_num)
+        print("小说总章节数:",record_num)
         counts=record_num
         url_c = firsturl
         start_time=time.time()  #获取提取小说内容程序运行的起始时间
         f = open(txtname+".txt", mode='w', encoding='utf-8')   #写方式打开小说名称加txt组成的文件
         for i in range(counts):  #括号中为counts
-            record_m_count=myset.find({"url": url_c},{"content":1,"_id":0}).count()
-            if record_m_count == 0:
-               print("数据集中没有找到章节内容。\n出错url:",url_c)
-               break
-               
-            record_m = myset.find({"url": url_c},{"content":1,"_id":0})
+#-----------使用count()方法获得的返回整型值作为是否获得数据的判断依据-------------
+#            record_m_count=myset.find({"url": url_c},{"content":1,"_id":0}).count()
+#            if record_m_count == 0:
+#               print("数据集中没有找到章节内容。\n出错url:",url_c)
+#               break
+#--------------------------------------------------------------------------------
+
+#-----------使用next()方法读取迭代器数据，并使用try except捕获未获得数据的错误-----
+            try:   
+                record_m=myset.find({"url": url_c},{"content":1,"_id":0}).next()
+            #except Exception as e:
+            except StopIteration:
+                print("数据集中没有获得章节内容。\n出错url:",url_c)
+                break   #跳出for循环，终止小说文件生成
+#--------------------------------------------------------------------------------
             record_content_c2a0 = ''
-            for item_content in record_m:
-                record_content_c2a0 = item_content["content"]  #获取小说章节内容
+
+#------------使用for循环读取迭代器数据模式---------------------------------
+#            record_i = myset.find({"url": url_c},{"content":1,"_id":0})
+#            for record_m in record_i:
+#                record_content_c2a0 = record_m["content"]  #获取小说章节内容
+#---------------------------------------------------------------------------
+            record_content_c2a0 = record_m["content"] 
+
             #record_content=record_content_c2a0.replace(u'\xa0', u'')  #消除特殊字符\xc2\xa0
             record_content=record_content_c2a0
             #print(record_content)
