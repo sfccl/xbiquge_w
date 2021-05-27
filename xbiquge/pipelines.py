@@ -15,19 +15,19 @@ class XbiqugePipeline(object):
     name_novel = ''
     url_firstchapter = ''
     name_txt = ''
+    start_time=time.time()
 
     #定义类初始化动作
-    #def __init__(self):
+    def __init__(self):
+
+        return
 
     #爬虫开始
-    #def open_spider(self, spider):
+    def open_spider(self, spider):
 
-        #return
-    def clearcollection(self, name_collection):
-        myset = self.db[name_collection]
-        myset.remove()
+        return
 
-    def get_collection(self,name_collection):
+    def get_collection(self,name_collection):  #获取数据集cursor对象
         myset = self.db[name_collection]
         return myset
 
@@ -51,11 +51,10 @@ class XbiqugePipeline(object):
         url_c = firsturl
         start_time=time.time()  #获取提取小说内容程序运行的起始时间
         f = open(txtname+".txt", mode='w', encoding='utf-8')   #写方式打开小说名称加txt组成的文件
-        label_error = ""
         for i in range(counts):  #括号中为counts
             record_m_count=myset.find({"url": url_c},{"content":1,"_id":0}).count()
             if record_m_count == 0:
-               print("数据库中没有找到章节内容。\n出错url:",url_c)
+               print("数据集中没有找到章节内容。\n出错url:",url_c)
                break
                
             record_m = myset.find({"url": url_c},{"content":1,"_id":0})
@@ -73,7 +72,8 @@ class XbiqugePipeline(object):
                 url_c = item_url["next_page"]  #下一章链接地址赋值给url_c，准备下一次循环。
                 #print("下一页",url_c)
         f.close()
-        print(time.time()-start_time)
+        print("文件生成用时:",time.time()-start_time)
+        print("小说爬取总用时:",time.time()-self.start_time)
         print(txtname + ".txt" + " 文件已生成！")
         return
 

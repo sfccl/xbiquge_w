@@ -12,16 +12,16 @@ class SancunSpider(scrapy.Spider):
     name_txt = "./novels/三寸人间"
     url_chapters = url_firstchapter[0:32]
     pipeline=XbiqugePipeline()
-    #pipeline.clearcollection(name) #清空小说的数据集合（collection），mongodb的collection相当于mysql的数据表table
-    novelcollection=pipeline.get_collection(name)
+    novelcollection=pipeline.get_collection(name) #获取小说数据集cursor对象，mongodb的数据集（collection）相当于mysql的数据表table
+    #--------------------------------------------                   
     #如果next_page的值是小说目录页面url，则把包含目录页面的记录删除，以免再次抓取时，出现多>个目录页面url，使得无法获得最新内容。
     if novelcollection.find({"next_page":url_chapters}).count() != 0 :
         print("包含目录页面url的记录数:",novelcollection.find({"next_page":url_chapters}).count())
         novelcollection.remove({"next_page":url_chapters})
+    #--------------------------------------------
     novelcounts=novelcollection.find().count()
     novelurls=novelcollection.find({},{"_id":0,"id":1,"url":1})
     item = XbiqugeItem()
-    #item['id'] = 0         #新增id字段，便于查询
     item['id'] = novelcounts         #id置初值为colletion的记录总数
     item['name'] = name
     item['url_firstchapter'] = url_firstchapter
@@ -43,7 +43,7 @@ class SancunSpider(scrapy.Spider):
             self.novelurls=self.novelcollection.find({},{"_id":0,"id":1,"url":1})   #重置迭代器指针，使for循环能够遍历迭代器
             for url in self.novelurls:
                 #print("mongodb提取url:", url)
-                if url["url"]==self.url_c:      #如果数据库中找到与网页提取的url值相同，则跳出循环
+                if url["url"]==self.url_c:      #如果数据集中找到与网页提取的url值相同，则跳出循环
                     count_iterator += 1
                     count_bingo += 1
                     #print("count_iterator:",count_iterator)
@@ -57,10 +57,6 @@ class SancunSpider(scrapy.Spider):
         print("数据库已有记录数count_bingo:",count_bingo)       
 
     def parse_c(self, response):
-        #item = XbiqugeItem()
-        #item['name'] = self.name
-        #item['url_firstchapter'] = self.url_firstchapter
-        #item['name_txt'] = self.name_txt
         self.item['id'] += 1
         self.item['url'] = response.url
         self.item['preview_page'] = self.url_ori + response.css('div .bottem1 a::attr(href)').extract()[1]
@@ -74,6 +70,6 @@ class SancunSpider(scrapy.Spider):
         self.item['content'] = title + "\n" + text.replace('\15', '\n')     #各章节标题和内容组合成content数据，\15是^M的八进制表示，需要替换为换行符。
         yield self.item     #以生成器模式（yield）输出Item对象的内容给pipelines模块。
 
-        if self.item['url'][31:38] == self.item['next_page'][31:38]: #同一章有分页的处理
+        if self.item['url'][32:39] == self.item['next_page'][32:39]: #同一章有分页的处理
             self.url_c = self.item['next_page']
             yield scrapy.Request(self.url_c, callback=self.parse_c)
