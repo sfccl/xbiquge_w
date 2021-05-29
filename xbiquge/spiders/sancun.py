@@ -2,6 +2,7 @@
 import scrapy
 from xbiquge.items import XbiqugeItem
 from xbiquge.pipelines import XbiqugePipeline
+import pdb
 
 class SancunSpider(scrapy.Spider):
     name = 'sancun'
@@ -16,7 +17,8 @@ class SancunSpider(scrapy.Spider):
     #--------------------------------------------                   
     #如果next_page的值是小说目录页面url，则把包含目录页面的记录删除，以免再次抓取时，出现多>个目录页面url，使得无法获得最新内容。
     if novelcollection.find({"next_page":url_chapters}).count() != 0 :
-        print("包含目录页面url的记录数:",novelcollection.find({"next_page":url_chapters}).count())
+        print("包含目录页面url的记录:",novelcollection.find({"next_page":url_chapters},{"_id":0,"id":1,"url":1,"next_page":1}).next())
+#        pdb.set_trace()
         novelcollection.remove({"next_page":url_chapters})
         print("已删除包含目录页面url的记录。")
     #--------------------------------------------
@@ -35,6 +37,7 @@ class SancunSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):    #网页提取数据，并与mongodb数据集比较，没有相同的数据才从网页抓取。
+        f = open("/root/xbiquge_w/url_list.txt","w")   #打开文件，以便写入抓取页面url
         count_bingo=0   #数据集中已有记录的条数 
         dl = response.css('#list dl dd')     #提取章节链接相关信息
         for dd in dl:
@@ -50,10 +53,12 @@ class SancunSpider(scrapy.Spider):
                     break
             if count_iterator != 0 :            #如果有命中结果，则继续下一个循环，不执行爬取动作
                continue
-            print("爬取url:",self.url_c)
+            #print("爬取url:",self.url_c)
+            f.write("爬取url:"+self.url_c+"\n")
             #yield scrapy.Request(self.url_c, callback=self.parse_c,dont_filter=True)
             yield scrapy.Request(self.url_c, callback=self.parse_c)    #以生成器模式（yield）调用parse_c方法获得各章节链接、上一页链接、下一页链接和章节内容信息。
             #print(self.url_c)
+        f.close()
         print("数据集已有记录数count_bingo:",count_bingo)       
 
     def parse_c(self, response):
