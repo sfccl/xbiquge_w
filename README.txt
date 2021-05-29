@@ -22,4 +22,7 @@
 1、本次修改xbiquge/pipelines.py和xbiquge/spiders/sancun.py文件，使爬取过程中不用清空数据集（collection），若一次爬取不成功，可继续多次爬取。
 2、爬取过程中最可能的因素是爬取的网页错误导致无法输出正确的小说txt文件，要注意检查小说数据集内容，有必要的话，可登录mongodb数据，使用db.sancun.remove({})命令清空数据集后，再次爬取。
 
+四、2021年5月29日
+1、新增两个多爬虫文件，其中multiscrapy.py是并行爬虫，serialscrapy.py是串行爬虫，使用时修改其中的爬虫文件名，并使用python multiscrapy.py 或 Python serialscrapy.py命令即可运行。
+2、若只是单个爬虫运行，原则上在xbiquge/spiders目录下只保留单个爬虫文件，不要放置两个以上的爬虫文件。（爬虫开头的程序有可能到其它爬虫程序中读取数据，具体原因待查...）
 
