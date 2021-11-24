@@ -7,11 +7,11 @@ import pdb
 class SancunSpider(scrapy.Spider):
     name = 'sancun'
     allowed_domains = ['www.xbiquge.la']
-    #start_urls = ['http://www.xbiquge.la/10/10489/']
+    #start_urls = ['https://www.xbiquge.la/10/10489/']
     url_ori= "https://www.xbiquge.la"
     url_firstchapter = "https://www.xbiquge.la/10/10489/4534454.html"
     name_txt = "./novels/三寸人间"
-    url_chapters = url_firstchapter[0:32]
+    url_chapters = url_firstchapter[0:32]  #截取字符串包括尾部的正斜杠
     pipeline=XbiqugePipeline()
     novelcollection=pipeline.get_collection(name) #获取小说数据集cursor对象，mongodb的数据集（collection）相当于mysql的数据表table
     #--------------------------------------------                   
