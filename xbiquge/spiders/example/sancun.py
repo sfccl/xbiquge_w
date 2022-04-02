@@ -17,7 +17,7 @@ class SancunSpider(scrapy.Spider):
     pipeline=XbiqugePipeline()
     novelcollection=pipeline.get_collection(name) #获取小说数据集cursor对象，mongodb的数据集（collection）相当于mysql的数据表table
     #--------------------------------------------                   
-    #如果next_page的值是小说目录页面url，则把包含目录页面的记录删除，以免再次抓取时，出现多>个目录页面url，使得无法获得最新内容。
+    #如果next_page的值是小说目录页面url，则把包含目录页面的记录删除，以免再次抓取时，出现多个目录页面url，使得无法获得最新内容。
     if novelcollection.find({"next_page":url_chapters}).count() != 0 :
         print("包含目录页面url的记录:",novelcollection.find({"next_page":url_chapters},{"_id":0,"id":1,"url":1,"next_page":1}).next())
 #        pdb.set_trace()
