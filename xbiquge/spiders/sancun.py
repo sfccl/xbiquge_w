@@ -3,6 +3,7 @@ import scrapy
 from xbiquge.items import XbiqugeItem
 from xbiquge.pipelines import XbiqugePipeline
 import pdb
+from urllib.parse import urljoin
 
 class SancunSpider(scrapy.Spider):
     name = 'sancun'
@@ -66,8 +67,10 @@ class SancunSpider(scrapy.Spider):
     def parse_c(self, response):
         self.item['id'] += 1
         self.item['url'] = response.url
-        self.item['preview_page'] = self.url_ori + response.css('div .bottem1 a::attr(href)').extract()[1]
-        self.item['next_page'] = self.url_ori + response.css('div .bottem1 a::attr(href)').extract()[3]
+        #self.item['preview_page'] = self.url_ori + response.css('div .bottem1 a::attr(href)').extract()[1]
+        self.item['preview_page'] = urljoin(self.url_ori, response.css('div .bottem1 a::attr(href)').extract()[1])
+        #self.item['next_page'] = self.url_ori + response.css('div .bottem1 a::attr(href)').extract()[3]
+        self.item['next_page'] = urljoin(self.url_ori, response.css('div .bottem1 a::attr(href)').extract()[3])
         title = response.css('.con_top::text').extract()[4]
         contents = response.css('#content::text').extract()
         text=''
@@ -77,6 +80,6 @@ class SancunSpider(scrapy.Spider):
         self.item['content'] = title + "\n" + text.replace('\15', '\n')     #各章节标题和内容组合成content数据，\15是^M的八进制表示，需要替换为换行符。
         yield self.item     #以生成器模式（yield）输出Item对象的内容给pipelines模块。
 
-        if self.item['url'][url_firstchapter.rfind('/')+1:url_firstchapter.rfind('.')] == self.item['next_page'][url_firstchapter.rfind('/')+1:url_firstchapter.rfind('.')]: #同一章有分页的处理
+        if self.item['url'][self.url_firstchapter.rfind('/')+1:self.url_firstchapter.rfind('.')] == self.item['next_page'][self.url_firstchapter.rfind('/')+1:self.url_firstchapter.rfind('.')]: #同一章有分页的处理
             self.url_c = self.item['next_page']
             yield scrapy.Request(self.url_c, callback=self.parse_c)

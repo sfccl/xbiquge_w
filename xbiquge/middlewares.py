@@ -6,7 +6,9 @@
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
-
+from fake_useragent import UserAgent
+import random
+from .proxies import proxy_list
 
 class XbiqugeSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
@@ -101,3 +103,40 @@ class XbiqugeDownloaderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
+class RandomUserAgentMiddleware(object):
+    def __init__(self, crawler):
+        super(RandomUserAgentMiddleware, self).__init__()
+        self.ua = UserAgent()
+        self.ua_type = crawler.settings.get('RANDOM_UA_TYPE', 'random')
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler)
+    def process_request(self, request, spider):
+        def get_ua():
+            return getattr(self.ua, self.ua_type)
+        request.headers.setdefault("User-Agent", get_ua())
+
+class XbiqugeCookieMiddleware(object):
+    def process_request(self, request, spider):
+        cookies = self.get_cookies()
+        request.cookies = cookies
+
+    def get_cookies(self):
+        cookie = 'Hm_lvt_56844e6b74c4d3517aa12fcc1561e5c3=1659977978; bcolor=; font=; size=; fontcolor=; width=; PHPSESSID=7vh8vodsr9u7flj8fb0c34vk13; Hm_lvt_c88891805dd27a5878c8ee6312582d4b=1659977998; Hm_lpvt_c88891805dd27a5878c8ee6312582d4b=1659982563; Hm_lpvt_56844e6b74c4d3517aa12fcc1561e5c3=1660005610'
+        cookies = {}
+        c_list = cookie.split(';')
+        for c in c_list:
+            cookies[c.split('=')[0]] = c.split('=')[1]
+        return cookies
+
+class XbiqugeProxyMiddleware(object):
+    def process_request(self, request, spider):
+        proxy = random.choice(proxy_list)
+        request.meta['proxy'] = proxy
+
+    #使用process_exception()处理异常
+    #有些proxy不能用时，需要处理异常：方法时再让他选代理
+    def process_exception(self, request, exception, spider):
+        #将request请求对象再次交给中间件，继续找proxy，一直找到能用的proxy
+        return request
