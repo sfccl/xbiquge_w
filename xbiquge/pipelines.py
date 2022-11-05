@@ -8,6 +8,7 @@ import os
 import time
 from twisted.enterprise import adbapi
 from pymongo import MongoClient
+from functools import wraps
 
 class XbiqugePipeline(object):
     conn = MongoClient('mongodb://admin:admin@localhost:27017/admin')
@@ -92,7 +93,7 @@ class XbiqugePipeline(object):
         print(txtname + ".txt" + " 文件已生成！")
         return
 
-    #爬虫结束，调用content2txt方法，生成txt文件
+#爬虫结束，调用content2txt方法，生成txt文件
     def close_spider(self,spider):
         if self.name_novel !='' and self.url_firstchapter != '' and self.name_txt != '':
             self.content2txt(self.name_novel,self.url_firstchapter,self.name_txt)

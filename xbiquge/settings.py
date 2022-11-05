@@ -38,6 +38,8 @@ DOWNLOAD_DELAY = 2
 
 # Disable Telnet Console (enabled by default)
 #TELNETCONSOLE_ENABLED = False
+TELNETCONSOLE_PASSWORD = '123456'
+
 
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS = {

@@ -9,6 +9,7 @@ from scrapy import signals
 from fake_useragent import UserAgent
 import random
 from .proxies import proxy_list
+import os
 
 class XbiqugeSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
@@ -107,7 +108,9 @@ class XbiqugeDownloaderMiddleware(object):
 class RandomUserAgentMiddleware(object):
     def __init__(self, crawler):
         super(RandomUserAgentMiddleware, self).__init__()
-        self.ua = UserAgent()
+        location = os.getcwd() + '/xbiquge/fake_useragent.json'  #2022-11-05修改，以解决“FakeUserAgentError('Maximum amount of retries reached')”
+        #print(location)
+        self.ua = UserAgent(path=location)                       #此处原为self.ua = UserAgent()
         self.ua_type = crawler.settings.get('RANDOM_UA_TYPE', 'random')
     @classmethod
     def from_crawler(cls, crawler):
